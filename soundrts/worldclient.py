@@ -248,7 +248,7 @@ class Coordinator(_Client): # client coordinator for multiplayer games
     def get_digest(self):
         return "%s-%s.%s-%s" % (self.world.time,
                                 self.turn, self.sub_turn,
-                                md5(self.world.previous_state[1]).hexdigest())
+                                md5(self.world.previous_state[1].encode()).hexdigest())
 
     def get_sync_debug_msg_1(self):
         return "out_of_sync_error: map=%s version=%s platform=%s python=%s md5=%s time=%s" % (

@@ -298,7 +298,7 @@ class World(object):
         return "\n".join(self._get_objects_values())
 
     def get_digest(self):
-        d = md5(str(self.time))
+        d = md5(str(self.time).encode())
         for p in self.players:
             d.update(str(len(p.units)))
         for z in self.squares:

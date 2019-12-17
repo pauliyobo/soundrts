@@ -56,9 +56,9 @@ def input_string(msg=[], pattern="^[a-zA-Z0-9]$", default="", spell=True):
             elif e.key == K_BACKSPACE:
                 s = s[:-1]
                 voice.item(string_to_msg(s, spell))
-            elif re.match(pattern, e.str) != None:
+            elif re.match(pattern, e.unicode) != None:
                 try:
-                    c = e.str.encode("ascii") # telnetlib doesn't like unicode
+                    c = e.unicode.encode("ascii") # telnetlib doesn't like unicode
                     s += c
                     voice.item(string_to_msg(c)
                                + mp.PERIOD
@@ -183,10 +183,10 @@ class Menu(object):
                                    spell=False)
                 if msg:
                     self.server.write_line("say %s" % msg)
-        elif e.str and e.mod & KMOD_SHIFT:
-            self._select_next_choice(e.str, -1)
-        elif e.str:
-            self._select_next_choice(e.str)
+        elif e.unicode and e.mod & KMOD_SHIFT:
+            self._select_next_choice(e.unicode, -1)
+        elif e.unicode:
+            self._select_next_choice(e.unicode)
         elif e.key not in [K_LSHIFT,K_RSHIFT]:
             voice.item(mp.SELECT_AND_CONFIRM_EXPLANATION)
 

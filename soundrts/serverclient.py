@@ -54,7 +54,7 @@ class ConnectionToClient(asynchat.async_chat):
             warning("action unknown: %s" % args[0])
 
     def found_terminator(self):
-        data = string.replace(self.inbuffer, "\r", "")
+        data = self.inbuffer.replace("\r", "")
         self.inbuffer = ''
         try:
             self._execute_command(data)

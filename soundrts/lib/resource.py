@@ -11,6 +11,7 @@ from builtins import object
 import locale
 import os
 import re
+import traceback
 
 from soundrts.lib import encoding
 from soundrts.lib.log import warning
@@ -177,7 +178,7 @@ class ResourceLoader(object):
                         key, value = line.split(None, 1)
                         if value:
                             try:
-                                value = str(value, encoding_name)
+                                value = str(value)
                             except ValueError:
                                 value = str(value, encoding_name, "replace")
                                 warning("in '%s', encoding error: %s", TXT_FILE, line)
