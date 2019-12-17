@@ -2,12 +2,15 @@
 http://stackoverflow.com/questions/3612094/better-way-to-zip-files-in-python-zip-a-whole-directory-with-a-single-command?lq=1
 http://stackoverflow.com/questions/10060069/safely-extract-zip-or-tar-using-python
 """
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
+from builtins import input
 import os
 import string
 import zipfile
 
-from log import warning
+from .log import warning
 
 
 def zipdir(target_dir, dest_file):
@@ -41,7 +44,7 @@ if __name__ == "__main__":
     if os.path.exists(dest):
         shutil.rmtree(dest)
     unzipdir(zf, dest)
-    raw_input("Check %s and %s, then press Enter to continue the test." % (zf, dest))
+    input("Check %s and %s, then press Enter to continue the test." % (zf, dest))
     try:
         unzipdir(zf, dest)
     except:

@@ -1,5 +1,10 @@
 """"use integers to make sure that any computer will give the same results"""
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
 
+from builtins import range
+from past.utils import old_div
 import math
 import sys
 
@@ -22,17 +27,17 @@ def make_tables():
                       for a in range(360))
     acos_table = dict(((c, int(math.degrees(math.acos(c / 100.0))))
                        for c in range(-100, 101)))
-    print "_COS_TABLE =", cos_table
-    print "_SIN_TABLE =", sin_table
-    print "_ACOS_TABLE =", acos_table
+    print("_COS_TABLE =", cos_table)
+    print("_SIN_TABLE =", sin_table)
+    print("_ACOS_TABLE =", acos_table)
 
 
 def to_int(s):
     """convert a string to an integer with PRECISION"""
     assert isinstance(s, str)  # don't convert twice!
     result = int(float(s) * PRECISION)
-    if isinstance(result, long):
-        warning("%s is a long integer (greater than %s).", result, sys.maxint)
+    if isinstance(result, int):
+        warning("%s is a long integer (greater than %s).", result, sys.maxsize)
     return result
 
 
@@ -75,7 +80,7 @@ def int_angle(x1, y1, x2, y2):
     d = int_distance(x1, y1, x2, y2)
     if d == 0:
         return 0
-    c = (x2 - x1) * 100 / d  # 100 for the table
+    c = old_div((x2 - x1) * 100, d)  # 100 for the table
     ac = _ACOS_TABLE[c]
     if y2 - y1 > 0:
         return ac

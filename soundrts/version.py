@@ -1,10 +1,12 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
 try:
     from hashlib import md5
 except ImportError:
     from md5 import md5
 import os
 
-import res
+from . import res
 
 
 VERSION = "1.2-c13-dev"

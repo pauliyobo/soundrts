@@ -1,7 +1,12 @@
-from lib.voice import voice
-from lib.log import warning
-from lib.nofloat import PRECISION
-import msgparts as mp
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import object
+from past.utils import old_div
+from .lib.voice import voice
+from .lib.log import warning
+from .lib.nofloat import PRECISION
+from . import msgparts as mp
 
 
 _subzone_name = {
@@ -61,7 +66,7 @@ class Zoom(object):
 
     def move_to(self, o):
         self.parent.place = o.place
-        for self.sub_x, self.sub_y in _subzone_name.keys():
+        for self.sub_x, self.sub_y in list(_subzone_name.keys()):
             self.update_coords()
             if self.contains(o):
                 self.parent.set_obs_pos()
@@ -93,4 +98,4 @@ class Zoom(object):
         y = self.ymin + (self.ymax - self.ymin) / 8.0
         if self.parent.place not in self.parent.scouted_squares:
             y -= self.ymax - self.ymin # lower sounds if fog of war
-        return x / PRECISION, y / PRECISION
+        return old_div(x, PRECISION), old_div(y, PRECISION)

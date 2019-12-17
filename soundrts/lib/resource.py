@@ -4,7 +4,10 @@ the active packages, the loading order of the mods.
 Some resources will be combined differently: some are replaced (sounds),
 some are merged (some text files).
 """
+from __future__ import unicode_literals
 
+from builtins import str
+from builtins import object
 import locale
 import os
 import re
@@ -174,9 +177,9 @@ class ResourceLoader(object):
                         key, value = line.split(None, 1)
                         if value:
                             try:
-                                value = unicode(value, encoding_name)
+                                value = str(value, encoding_name)
                             except ValueError:
-                                value = unicode(value, encoding_name, "replace")
+                                value = str(value, encoding_name, "replace")
                                 warning("in '%s', encoding error: %s", TXT_FILE, line)
                             result[key] = value
                         else:

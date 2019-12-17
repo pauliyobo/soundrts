@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 from soundrts.world import World
 from soundrts.worldclient import DummyClient
 from soundrts.worldplayercomputer import Computer
@@ -11,7 +13,7 @@ class Deposit(Deposit):
         self.resource_type = type_
 
 
-class Warehouse:
+class Warehouse(object):
 
     def __init__(self, types):
         self.storable_resource_types = types

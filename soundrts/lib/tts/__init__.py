@@ -1,5 +1,9 @@
+from __future__ import print_function
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
 import platform
-import Queue
+import queue
 import threading
 import time
 
@@ -12,7 +16,7 @@ TTS_TIMEOUT = .1 # in seconds
 _tts = None
 _is_speaking = False
 
-_queue = Queue.Queue()
+_queue = queue.Queue()
 
 
 def is_speaking():
@@ -35,7 +39,7 @@ def _speak(text):
 
 def speak(text):
     global _is_speaking
-    assert isinstance(text, unicode)
+    assert isinstance(text, str)
     if not is_available: return
     _queue.put((_speak, text))
     _is_speaking = True
@@ -89,28 +93,28 @@ def init(jaws=0, srapi=1, srapi_wait=.1):
             try:
                 from . import windows_jaws as pyTTS
             except:
-                print "Couldn't use Jaws."
+                print("Couldn't use Jaws.")
         elif srapi == 0:
             try:
                 from . import windows_sapi5 as pyTTS
             except:
-                print "Couldn't use SAPI."
+                print("Couldn't use SAPI.")
         else:
             try:
                 from . import windows_srapi as pyTTS
                 pyTTS.srapi_wait = srapi_wait
             except:
-                print "Couldn't use ScreenReaderAPI."
+                print("Couldn't use ScreenReaderAPI.")
     elif platform.system() == "Linux":
         try:
             from . import linux as pyTTS
         except:
-            print "Couldn't use Speech Dispatcher."
+            print("Couldn't use Speech Dispatcher.")
     elif platform.system() == "Darwin":
         try:
             from . import darwin as pyTTS
         except:
-            print "Couldn't use Appkit.NSSpeechSynthesizer."
+            print("Couldn't use Appkit.NSSpeechSynthesizer.")
     _lock = threading.Lock()
     try:
         _tts = pyTTS.Create()

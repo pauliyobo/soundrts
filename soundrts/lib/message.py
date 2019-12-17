@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 import time
 
 from soundrts.lib.screen import screen_subtitle_set
@@ -6,7 +8,7 @@ from soundrts.lib.sound_cache import sounds
 
 
 def is_text(o):
-    return isinstance(o, unicode)
+    return isinstance(o, str)
 
 
 class Message(object):

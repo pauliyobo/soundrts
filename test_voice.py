@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import range
 from soundrts.clientmedia import init_media
 from soundrts.lib.voice import voice
 

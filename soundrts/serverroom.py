@@ -1,10 +1,17 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import random
 import time
 
-import config
-from definitions import VIRTUAL_TIME_INTERVAL
-from lib.log import info, warning
-from version import IS_DEV_VERSION
+from . import config
+from .definitions import VIRTUAL_TIME_INTERVAL
+from .lib.log import info, warning
+from .version import IS_DEV_VERSION
 
 
 def same(strings):
@@ -94,22 +101,22 @@ class Orders(object):
 
     def pop_and_pack(self):
         _all_orders = []
-        for player, queue in self.all_orders.items():
+        for player, queue in list(self.all_orders.items()):
             orders = queue.pop(0)[0]
             _all_orders.append("%s/%s" % (player.login, orders))
         return " ".join(_all_orders)
 
     def are_ready(self):
-        return [] not in self.all_orders.values()
+        return [] not in list(self.all_orders.values())
 
     def remove(self, client):
         del self.all_orders[client]
 
     def players_without_orders(self):
-        return [player for player, queue in self.all_orders.items() if not queue]
+        return [player for player, queue in list(self.all_orders.items()) if not queue]
 
     def get_next_check_strings(self):
-        return [queue[0][1] for queue in self.all_orders.values()]
+        return [queue[0][1] for queue in list(self.all_orders.values())]
 
 
 class Game(object):
@@ -185,7 +192,7 @@ class Game(object):
 
     @property
     def nb_minutes(self):
-        return int((time.time() - self._start_time) / 60)
+        return int(old_div((time.time() - self._start_time), 60))
 
     def close(self):
         info("closed game %s after %s turns (played for %s minutes)", self.id,
@@ -223,7 +230,7 @@ class Game(object):
         """number of simulation frames per communication turn"""
         # 1 is probably the best number in most cases because the game is often CPU-bound.
         # the following number could be chosen instead someday
-        tps = self.real_speed * 1000 / VIRTUAL_TIME_INTERVAL
+        tps = old_div(self.real_speed * 1000, VIRTUAL_TIME_INTERVAL)
         # Avoid unrealistic ping values.
         ping = min(self.max_ping, self.ping)
         result = int(tps * ping * config.fpct_coef) + 1

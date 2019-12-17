@@ -1,18 +1,23 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import object
+from past.utils import old_div
 import random
 import time
 
 import pygame
 
-from clientgamenews import must_be_said
-from clientmedia import voice, sounds, get_fullscreen
-import config
-from definitions import style
-from lib.log import warning, exception
-from lib.msgs import nb2msg
-from lib.nofloat import PRECISION
-from worldunit import BuildingSite
-from lib.sound import psounds, distance
-import msgparts as mp
+from .clientgamenews import must_be_said
+from .clientmedia import voice, sounds, get_fullscreen
+from . import config
+from .definitions import style
+from .lib.log import warning, exception
+from .lib.msgs import nb2msg
+from .lib.nofloat import PRECISION
+from .worldunit import BuildingSite
+from .lib.sound import psounds, distance
+from . import msgparts as mp
 
 
 # minimal interval (in seconds) between 2 sounds
@@ -58,7 +63,7 @@ class EntityView(object):
             s = self.model.actual_speed
         except:
             s = self.model.speed
-        return 1000.0 / s / 2 + self.footstep_random
+        return old_div(1000.0 / s, 2) + self.footstep_random
 
     @property
     def when_moving_through(self):
@@ -78,13 +83,13 @@ class EntityView(object):
         if name in ["x", "y"]:
             v /= 1000.0
         elif name in ("qty", "hp", "hp_max", "mana", "mana_max"):
-            v = int(v / PRECISION)
+            v = int(old_div(v, PRECISION))
         return v
 
     def __getstate__(self):
         odict = self.__dict__.copy() # copy the dict since we change it
         for k in ("loop_source", "repeat_source"):
-            if odict.has_key(k):
+            if k in odict:
                 del odict[k] # remove Sound entry
         return odict
 
@@ -231,7 +236,7 @@ class EntityView(object):
 
     def corrected_color(self):
         if self.model in self.interface.memory:
-            return tuple([x / 2 for x in self.color()])
+            return tuple([old_div(x, 2) for x in self.color()])
         else:
             return self.color()
 
@@ -263,7 +268,7 @@ class EntityView(object):
                     except KeyError: # probably caused by the world client updates
                         continue
                     try:
-                        d = distance(o.x, o.y, self.x, self.y) / k
+                        d = old_div(distance(o.x, o.y, self.x, self.y), k)
                     except ZeroDivisionError:
                         continue
                     if d < d_min:
@@ -275,7 +280,7 @@ class EntityView(object):
         if self.is_moving and not self.is_memory:
             if self.next_step is None:
                 self.step_side = 1
-                self.next_step = time.time() + random.random() * self.footstep_interval / self.interface.real_speed # start at different moments
+                self.next_step = time.time() + old_div(random.random() * self.footstep_interval, self.interface.real_speed) # start at different moments
             elif time.time() > self.next_step:
                 if self.interface.immersion and (self.x, self.y) == (self.interface.x, self.interface.y):
                     v = 1 / 2.0
@@ -285,7 +290,7 @@ class EntityView(object):
                     self.launch_event(self.footstepnoise()[self.step_side], v, priority=-10, limit=FOOTSTEP_LIMIT)
                 except IndexError:
                     pass
-                self.next_step = time.time() + self.footstep_interval / self.interface.real_speed
+                self.next_step = time.time() + old_div(self.footstep_interval, self.interface.real_speed)
                 self.step_side = 1 - self.step_side
         else:
             self.next_step = None
@@ -311,11 +316,11 @@ class EntityView(object):
             if st:
                 return st
         if hasattr(self, "hp"):
-            if self.hp < self.hp_max * 2 / 3:
+            if self.hp < old_div(self.hp_max * 2, 3):
                 st = self.get_style("noise_if_damaged")
                 if st:
                     return st
-            if self.hp < self.hp_max / 3:
+            if self.hp < old_div(self.hp_max, 3):
                 st = self.get_style("noise_if_very_damaged")
                 if st:
                     return st
@@ -402,7 +407,7 @@ class EntityView(object):
     previous_hp = None
 
     def _hp_noise(self, hp):
-        return int(hp * 10 / self.hp_max)
+        return int(old_div(hp * 10, self.hp_max))
 
     def render_hp_evolution(self):
         if self.previous_hp is not None:
@@ -540,4 +545,4 @@ class EntityView(object):
             voice.info(substitute_args(self.get_style("added_msg"), [self.ext_title]))
 
 
-from clientgameorder import OrderView, get_orders_list
+from .clientgameorder import OrderView, get_orders_list

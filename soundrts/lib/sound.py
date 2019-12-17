@@ -1,3 +1,8 @@
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import math
 import random
 import time
@@ -21,7 +26,7 @@ def angle(x1, y1, x2, y2, o=0):
     d = distance(x1, y1, x2, y2)
     if d == 0:
         return 0 # object too close => in front of player
-    ac = math.acos((x2 - x1) / d)
+    ac = math.acos(old_div((x2 - x1), d))
     if y2 - y1 > 0:
         a = ac
     else:
@@ -50,14 +55,14 @@ def stereo(x, y, xo, yo, o, volume=1, vision=False):
         vd /= k
     if d < 1 or vision:
         d = 1
-    vg = min(vg * volume / d, 1)
-    vd = min(vd * volume / d, 1)
+    vg = min(old_div(vg * volume, d), 1)
+    vd = min(old_div(vd * volume, d), 1)
     return vg, vd
 
 def find_idle_channel():
     # because pygame.mixer.find_channel() doesn't work
     # (it can return the reserved channel 0)
-    for n in xrange(1, pygame.mixer.get_num_channels()): # avoid channel 0
+    for n in range(1, pygame.mixer.get_num_channels()): # avoid channel 0
         if not pygame.mixer.Channel(n).get_busy():
             return pygame.mixer.Channel(n)
 
@@ -100,8 +105,8 @@ class SoundManager(object):
         else:
             flattening_factor = 2.0 # TODO: calc this
             self.listener.o = 90
-        return stereo(self.listener.x, self.listener.y / flattening_factor,
-                      source.x, source.y / flattening_factor,
+        return stereo(self.listener.x, old_div(self.listener.y, flattening_factor),
+                      source.x, old_div(source.y, flattening_factor),
                       self.listener.o, source.v)
 
     def play(self, *args, **keywords):

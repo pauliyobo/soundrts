@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 from soundrts.serverclient import ConnectionToClient
 
 
@@ -10,7 +12,7 @@ class Client(ConnectionToClient):
         self.cmd = data
 
 
-class Server:
+class Server(object):
 
     clients = []
 

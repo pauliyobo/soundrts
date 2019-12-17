@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+from builtins import next
+from builtins import object
 import threading
 import time
 
@@ -177,7 +180,7 @@ class _Voice(object):
                 break
             elif interruptible and self._key_hit(): # keep_key=False? (and remove next line?)
                 if self._unsaid_exists():
-                    self.next()
+                    next(self)
                     pygame.event.get([KEYDOWN]) # consequence: _key_hit() == False
                 else:
                     break

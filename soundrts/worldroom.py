@@ -1,16 +1,22 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import string
 
-from lib.msgs import nb2msg
-from lib.nofloat import int_distance, int_angle, int_cos_1000, int_sin_1000
-from lib.priodict import priorityDictionary
-from worldentity import COLLISION_RADIUS
-from worldexit import passage
-from worldresource import Deposit, Meadow
+from .lib.msgs import nb2msg
+from .lib.nofloat import int_distance, int_angle, int_cos_1000, int_sin_1000
+from .lib.priodict import priorityDictionary
+from .worldentity import COLLISION_RADIUS
+from .worldexit import passage
+from .worldresource import Deposit, Meadow
 
 
 SPACE_LIMIT = 144
 
-def square_spiral(x, y, step=COLLISION_RADIUS * 25 / 10):
+def square_spiral(x, y, step=old_div(COLLISION_RADIUS * 25, 10)):
     yield x, y
     sign = 1
     delta = 1
@@ -68,8 +74,8 @@ class Square(object):
         self.ymin = row * width
         self.xmax = self.xmin + width
         self.ymax = self.ymin + width
-        self.x = (self.xmax + self.xmin) / 2
-        self.y = (self.ymax + self.ymin) / 2
+        self.x = old_div((self.xmax + self.xmin), 2)
+        self.y = old_div((self.ymax + self.ymin), 2)
 
     def __repr__(self):
         return "<'%s'>" % self.name
@@ -116,9 +122,9 @@ class Square(object):
 
     def __getstate__(self):
         d = self.__dict__.copy()
-        if d.has_key('spiral'):
+        if 'spiral' in d:
             del d['spiral']
-        if d.has_key('neighbors'):
+        if 'neighbors' in d:
             del d['neighbors']
         return d
 
@@ -267,11 +273,11 @@ class Square(object):
             x = self.x
             y = self.y
             if nb > 1:
-                a = 360 * i / nb + shift
+                a = old_div(360 * i, nb) + shift
                 # it is possible to add a constant to this angle and keep
                 # the symmetry
-                x += square_width * 35 / 100 * int_cos_1000(a) / 1000
-                y += square_width * 35 / 100 * int_sin_1000(a) / 1000
+                x += old_div(old_div(square_width * 35, 100) * int_cos_1000(a), 1000)
+                y += old_div(old_div(square_width * 35, 100) * int_sin_1000(a), 1000)
             o.move_to(o.place, x, y)
 
     def can_receive(self, airground_type, player=None):
@@ -307,8 +313,8 @@ class Square(object):
 
     def ensure_path(self, other):
         if other not in [e.other_side.place for e in self.exits]:
-            x = (self.x + other.x) / 2
-            y = (self.y + other.y) / 2
+            x = old_div((self.x + other.x), 2)
+            y = old_div((self.y + other.y), 2)
             passage(((self, x, y, 0), (other, x, y, 0), False), "path")
             self.world._create_graphs()
 

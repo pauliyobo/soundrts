@@ -1,7 +1,11 @@
-import urllib2
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+import urllib.request, urllib.error, urllib.parse
 
-from lib.log import warning
-import msgparts as mp
+from .lib.log import warning
+from . import msgparts as mp
 
 
 # old value used by some features (stats, ...)
@@ -26,7 +30,7 @@ def servers_list(voice):
     query = "header=%s&include_ports=1" % header
     servers_url = MAIN_METASERVER_URL + "servers.php?" + query
     try:
-        f = urllib2.urlopen(servers_url)
+        f = urllib.request.urlopen(servers_url)
         if f.read(len(header)) == header:
             servers = f.readlines()
     except:

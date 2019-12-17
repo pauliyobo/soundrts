@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import input
 import re
 
 
@@ -42,4 +44,4 @@ if __name__ == "__main__":
     import doctest
     doctest.testmod()
     if "idlelib" not in dir():
-        raw_input("press ENTER to exit")
+        input("press ENTER to exit")

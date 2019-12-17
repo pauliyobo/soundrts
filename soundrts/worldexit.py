@@ -1,5 +1,7 @@
-from lib.nofloat import int_cos_1000, int_sin_1000
-from worldentity import Entity
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from .lib.nofloat import int_cos_1000, int_sin_1000
+from .worldentity import Entity
 
 
 class Exit(Entity):

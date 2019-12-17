@@ -1,11 +1,15 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from past.utils import old_div
 import re
 
-from definitions import get_ai, rules
-from lib.log import info, warning, exception
-from version import IS_DEV_VERSION
-from worldplayerbase import Player
-from worldresource import Meadow, Deposit, Corpse
-from worldunit import Worker, BuildingSite, Soldier
+from .definitions import get_ai, rules
+from .lib.log import info, warning, exception
+from .version import IS_DEV_VERSION
+from .worldplayerbase import Player
+from .worldresource import Meadow, Deposit, Corpse
+from .worldunit import Worker, BuildingSite, Soldier
 from soundrts.lib.nofloat import PRECISION
 from soundrts.worldorders import UseOrder
 
@@ -164,7 +168,7 @@ class Computer(Player):
     def _is_powerful_enough(self, units, place):
         # sometimes food limit prevents units with more than 1 food cost
         ratio = 180 if self.used_food < self.world.food_limit - 5 else 100
-        return sum(u.menace for u in units if u.speed > 0 and isinstance(u, Soldier)) > self.enemy_menace(place) * ratio / 100
+        return sum(u.menace for u in units if u.speed > 0 and isinstance(u, Soldier)) > old_div(self.enemy_menace(place) * ratio, 100)
 
     def _send_workers_to_forgotten_building_sites(self):
         for site in self._building_sites:
@@ -187,7 +191,7 @@ class Computer(Player):
 
     def _should_play_this_turn(self):
         players = self.world.cpu_intensive_players()
-        turn = players.index(self) * 10 / len(players)
+        turn = old_div(players.index(self) * 10, len(players))
         return self.world.turn % 10 == turn
 
     def play(self):
@@ -437,7 +441,7 @@ class Computer(Player):
         result = 9999
         for i, res in enumerate(self.resources):
             if cost[i]:
-                result = min(result, res / cost[i])
+                result = min(result, old_div(res, cost[i]))
         return result
 
     def get(self, nb, type):
@@ -491,7 +495,7 @@ class Computer(Player):
             if u.place not in starts: starts[u.place] = 1
             else: starts[u.place] += 1
         if starts:
-            return sorted(starts.items(), key=lambda x: (x[1], x[0].id))[-1][0]
+            return sorted(list(starts.items()), key=lambda x: (x[1], x[0].id))[-1][0]
 
     def build_or_train_or_upgradeto_or_summon(self, t, nb=1):
         if t.__class__ == str:

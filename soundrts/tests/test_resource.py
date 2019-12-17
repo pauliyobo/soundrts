@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from soundrts.lib.resource import localize_path, best_language_match
 
 

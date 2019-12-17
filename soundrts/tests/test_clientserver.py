@@ -1,7 +1,9 @@
+from __future__ import unicode_literals
+from builtins import object
 from soundrts.clientserver import ConnectionToServer
 
 
-class Telnet:
+class Telnet(object):
 
     done = False
 

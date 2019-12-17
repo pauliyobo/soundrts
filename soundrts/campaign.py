@@ -1,17 +1,22 @@
-import ConfigParser
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import configparser
 import os
 import re
 
-from clientmedia import voice, sounds, play_sequence
-from clientmenu import Menu
-import config
-from game import MissionGame
-from mapfile import Map
-from lib.msgs import nb2msg
-import msgparts as mp
-from paths import CAMPAIGNS_CONFIG_PATH
-import res
-from res import get_all_packages_paths
+from .clientmedia import voice, sounds, play_sequence
+from .clientmenu import Menu
+from . import config
+from .game import MissionGame
+from .mapfile import Map
+from .lib.msgs import nb2msg
+from . import msgparts as mp
+from .paths import CAMPAIGNS_CONFIG_PATH
+from . import res
+from .res import get_all_packages_paths
 
 
 class MissionChapter(Map):
@@ -51,7 +56,7 @@ class MissionChapter(Map):
             self._defeat()
 
 
-class CutSceneChapter:
+class CutSceneChapter(object):
 
     def __init__(self, path, campaign=None, id=None):
         self.path = path
@@ -130,7 +135,7 @@ class Campaign(object):
         return re.sub("[^a-zA-Z0-9]", "_", self.path)
 
     def _get_bookmark(self):
-        c = ConfigParser.SafeConfigParser()
+        c = configparser.SafeConfigParser()
         if os.path.isfile(CAMPAIGNS_CONFIG_PATH):
             c.readfp(open(CAMPAIGNS_CONFIG_PATH))
         try:
@@ -142,7 +147,7 @@ class Campaign(object):
         return self.chapters[:self._get_bookmark() + 1]
 
     def _set_bookmark(self, number):
-        c = ConfigParser.SafeConfigParser()
+        c = configparser.SafeConfigParser()
         if os.path.isfile(CAMPAIGNS_CONFIG_PATH):
             c.readfp(open(CAMPAIGNS_CONFIG_PATH))
         if self._get_id() not in c.sections():

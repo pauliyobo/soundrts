@@ -1,5 +1,7 @@
-from worldorders import ORDERS_DICT
-from worldplayerbase import Player
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from .worldorders import ORDERS_DICT
+from .worldplayerbase import Player
 
 
 orders = sorted(ORDERS_DICT.keys()) # sort to avoid desync

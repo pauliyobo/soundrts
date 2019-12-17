@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 # Problem with SDL (at least the one included in Pygame 1.9.1),
 # at least on Windows 10:
 # when focusing back with Alt+Tab,

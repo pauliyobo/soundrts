@@ -1,18 +1,24 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import copy
 import inspect
 import re
 import string
 
-from definitions import rules, style, MAX_NB_OF_RESOURCE_TYPES
-from lib import group
-from lib.log import info, warning, exception
-from lib.msgs import encode_msg, nb2msg
-from lib.nofloat import square_of_distance, to_int, PRECISION
-import msgparts as mp
-from worldentity import NotEnoughSpaceError, Entity
-from worldresource import Corpse
-from worldunit import BuildingSite, Soldier
-from worldupgrade import Upgrade
+from .definitions import rules, style, MAX_NB_OF_RESOURCE_TYPES
+from .lib import group
+from .lib.log import info, warning, exception
+from .lib.msgs import encode_msg, nb2msg
+from .lib.nofloat import square_of_distance, to_int, PRECISION
+from . import msgparts as mp
+from .worldentity import NotEnoughSpaceError, Entity
+from .worldresource import Corpse
+from .worldunit import BuildingSite, Soldier
+from .worldupgrade import Upgrade
 
 
 A = 12 * PRECISION # bucket side length
@@ -142,12 +148,12 @@ class Player(object):
             return 0
 
     def get_safest_subsquare(self, place):
-        x = place.x * 3 / self.world.square_width
-        y = place.y * 3 / self.world.square_width
+        x = old_div(place.x * 3, self.world.square_width)
+        y = old_div(place.y * 3, self.world.square_width)
         candidates = list((x + dx, y + dy) for dx in (0, 1, -1) for dy in (0, 1, -1))
         sub = sorted(candidates, key=self._get_threat)[0]
-        return (sub[0] * self.world.square_width / 3 + self.world.square_width / 6,
-                sub[1] * self.world.square_width / 3 + self.world.square_width / 6)
+        return (old_div(sub[0] * self.world.square_width, 3) + old_div(self.world.square_width, 6),
+                old_div(sub[1] * self.world.square_width, 3) + old_div(self.world.square_width, 6))
     
     def known_enemies(self, place):
         # assert: "memory is not included"
@@ -192,8 +198,8 @@ class Player(object):
 
     def _potential_neighbors(self, x, y):
         result = []
-        x = x / A
-        y = y / A
+        x = old_div(x, A)
+        y = old_div(y, A)
         for dx in [0, 1, -1]:
             for dy in [0, 1, -1]:
                 k = x + dx, y + dy
@@ -255,12 +261,12 @@ class Player(object):
         self.observed_before_squares.update(partially_observed_squares)
         # objects revealed by their actions
         for p in self.allied_vision:
-            for o in p.observed_objects.keys():
+            for o in list(p.observed_objects.keys()):
                 # remove old observed objects and deleted objects
                 if (p.observed_objects[o] < self.world.time
                     or o.place is None):
                     del p.observed_objects[o]
-            self.perception.update(p.observed_objects.keys())
+            self.perception.update(list(p.observed_objects.keys()))
         # sight
         for p in self.world.players:
             if p in self.allied_vision:
@@ -321,9 +327,9 @@ class Player(object):
                     if o.range > PRECISION:
                         for place in place.neighbors:
                             try:
-                                self._enemy_menace[place] += menace / 10
+                                self._enemy_menace[place] += old_div(menace, 10)
                             except:
-                                self._enemy_menace[place] = menace / 10
+                                self._enemy_menace[place] = old_div(menace, 10)
                 elif isinstance(o, Corpse):
                     self._places_with_corpses.add(place)
                 elif o.player in self.allied and o.is_vulnerable:
@@ -361,7 +367,7 @@ class Player(object):
             if u.place in squares:
                 a += u.menace
         try:
-            return a / self.enemy_menace(squares[0])
+            return old_div(a, self.enemy_menace(squares[0]))
         except ZeroDivisionError:
             return 1000
 
@@ -373,12 +379,12 @@ class Player(object):
                 elif u.airground_type == "water":
                     u.actual_speed = u.speed
                 else:
-                    u.actual_speed = u.speed * u.place.terrain_speed[0 if u.airground_type == "ground" else 1] / 100
+                    u.actual_speed = old_div(u.speed * u.place.terrain_speed[0 if u.airground_type == "ground" else 1], 100)
                 if u.speed:
                     u.actual_speed = max(u.actual_speed , VERY_SLOW) # never stuck
             except:
                 u.actual_speed = u.speed
-        for g in self.groups.values():
+        for g in list(self.groups.values()):
             if g:
                 actual_speed = min(u.actual_speed for u in g)
                 for u in g:
@@ -616,12 +622,12 @@ class Player(object):
         # float(args[0]) is probably not a problem for synchro since the result
         # of the multiplication is not reused after the comparison.
         # And for example: 6 == .1 * 60 (tested in Python 2.4)
-        return self.world.time / 1000 >= float(args[0]) * self.world.timer_coefficient
+        return old_div(self.world.time, 1000) >= float(args[0]) * self.world.timer_coefficient
         
     def lang_order(self, args):
         select, orders = args
         for x in select:
-            if self.world.grid.has_key(x):
+            if x in self.world.grid:
                 default_square = x
                 multiplicator = 1
             elif re.match("[0-9]+$", x):
@@ -670,7 +676,7 @@ class Player(object):
         sq = self.world.grid["a1"]
         multiplicator = 1
         for i in items:
-            if self.world.grid.has_key(i):
+            if i in self.world.grid:
                 sq = self.world.grid[i]
                 multiplicator = 1
             elif re.match("[0-9]+$", i):
@@ -730,7 +736,7 @@ class Player(object):
     def _get_score(self):
         score = self.nb_units_produced - self.nb_units_lost + self.nb_units_killed + self.nb_buildings_produced - self.nb_buildings_lost + self.nb_buildings_killed
         for i, _ in enumerate(self.resources):
-            score += (self.gathered_resources[i] + self.consumed_resources()[i]) / PRECISION
+            score += old_div((self.gathered_resources[i] + self.consumed_resources()[i]), PRECISION)
         return score
 
     def _get_score_msgs(self):
@@ -738,8 +744,8 @@ class Player(object):
             victory_or_defeat = mp.VICTORY
         else:
             victory_or_defeat = mp.DEFEAT
-        t = self.world.time / 1000
-        m = int(t / 60)
+        t = old_div(self.world.time, 1000)
+        m = int(old_div(t, 60))
         s = int(t - m * 60)
         msgs = []
         msgs.append(victory_or_defeat + mp.AT
@@ -757,10 +763,10 @@ class Player(object):
                     + nb2msg(self.nb_buildings_killed) + mp.NEUTRALIZED)
         res_msg = []
         for i, _ in enumerate(self.resources):
-            res_msg += nb2msg(self.gathered_resources[i] / PRECISION) \
+            res_msg += nb2msg(old_div(self.gathered_resources[i], PRECISION)) \
                        + style.get("parameters", "resource_%s_title" % i) \
                        + mp.GATHERED + mp.COMMA \
-                       + nb2msg(self.consumed_resources()[i] / PRECISION) \
+                       + nb2msg(old_div(self.consumed_resources()[i], PRECISION)) \
                        + mp.CONSUMED + mp.PERIOD
         msgs.append(res_msg[:-1])
         msgs.append(mp.SCORE + nb2msg(self._get_score())
@@ -817,13 +823,13 @@ class Player(object):
     def lang_add_objective(self, args):
         n = args[0]
         o = Objective(n, [int(x) for x in args[1:]])
-        if not self.objectives.has_key(n):
+        if n not in self.objectives:
             self.objectives[n] = o
             self.send_voice_important(mp.NEW_OBJECTIVE + o.description)
 
     def lang_objective_complete(self, args):
         n = args[0]
-        if self.objectives.has_key(n):
+        if n in self.objectives:
             self.send_voice_important(mp.OBJECTIVE_COMPLETE
                                       + self.objectives[n].description)
             del self.objectives[n]

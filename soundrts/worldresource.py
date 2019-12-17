@@ -1,7 +1,9 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
 import copy
 
-from lib.nofloat import to_int, PRECISION
-from worldentity import Entity
+from .lib.nofloat import to_int, PRECISION
+from .worldentity import Entity
 
 
 class Deposit(Entity):

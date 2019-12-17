@@ -1,12 +1,18 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import range
+from builtins import object
+from past.utils import old_div
 from math import sin, cos, radians
 
 import pygame
 
-from lib.screen import get_screen, draw_line, draw_rect
-from lib.log import warning
-from lib.nofloat import square_of_distance
+from .lib.screen import get_screen, draw_line, draw_rect
+from .lib.log import warning
+from .lib.nofloat import square_of_distance
 
-from definitions import style
+from .definitions import style
 
 
 R = int(0.5 * 10)
@@ -44,11 +50,11 @@ class GridView(object):
                     color = (color[0]*2, color[1]*2, color[2]*2)
                 if sq in self.interface.server.player.observed_before_squares \
                    and sq not in self.interface.server.player.observed_squares:
-                    color = (color[0]/10 + 15, color[1]/10 + 15, color[2]/10 + 15)
+                    color = (old_div(color[0],10) + 15, old_div(color[1],10) + 15, old_div(color[2],10) + 15)
                 elif sq not in self.interface.server.player.observed_squares:
                     color = (0, 0, 0)
                     continue
-                color = map(lambda x: min(x, 255), color)
+                color = [min(x, 255) for x in color]
                 draw_rect(color, self._get_rect_from_map_coords(xc, yc))
                 squares_to_view.append(sq)
         # walls
@@ -58,15 +64,15 @@ class GridView(object):
             x, y = self._xy_coords(sq.x, sq.y)
             for color, borders in (((100, 100, 100), walls), ((0, 0, 0), exits)):
                 for o in borders:
-                    dx = cos(radians(o)) * self.square_view_width / 2
-                    dy = - sin(radians(o)) * self.square_view_width / 2
+                    dx = old_div(cos(radians(o)) * self.square_view_width, 2)
+                    dy = old_div(- sin(radians(o)) * self.square_view_width, 2)
                     draw_line(color,
                               (x - dx - dy, y - dy - dx),
                               (x - dx + dy, y - dy + dx))
 
     def _get_view_coords_from_world_coords(self, ox, oy):
-        x = int(ox / self.interface.square_width * self.square_view_width)
-        y = int(self.ymax - oy / self.interface.square_width * self.square_view_height)
+        x = int(old_div(ox, self.interface.square_width) * self.square_view_width)
+        y = int(self.ymax - old_div(oy, self.interface.square_width) * self.square_view_height)
         return x, y
 
     def _object_coords(self, o):
@@ -99,10 +105,10 @@ class GridView(object):
                 color = (155,0,0)
             else:
                 color = (0, 0, 0)
-            pygame.draw.circle(get_screen(), color, (x, y), R/2, 0)
+            pygame.draw.circle(get_screen(), color, (x, y), old_div(R,2), 0)
             if getattr(o, "hp", None) is not None and \
                o.hp != o.hp_max:
-                hp_prop = 100 * o.hp / o.hp_max
+                hp_prop = old_div(100 * o.hp, o.hp_max)
                 if hp_prop > 80:
                     color = (0, 255, 0)
 ##                elif hp_prop > 50:
@@ -116,10 +122,10 @@ class GridView(object):
                                  (x - W + 2 * W, y - R - 2))
                 pygame.draw.line(get_screen(), color,
                                  (x - W, y - R - 2),
-                                 (x - W + hp_prop * (2 * W) / 100, y - R - 2))
+                                 (x - W + old_div(hp_prop * (2 * W), 100), y - R - 2))
 
     def display_objects(self):
-        for o in self.interface.dobjets.values():
+        for o in list(self.interface.dobjets.values()):
             self.display_object(o)
             if o.place is None and not o.is_inside \
                and not (self.interface.already_asked_to_quit or
@@ -129,8 +135,8 @@ class GridView(object):
                     warning("(memory)")
 
     def _update_coefs(self):
-        self.square_view_width = self.square_view_height = min((get_screen().get_width() - 200) / (self.interface.xcmax + 1),
-            get_screen().get_height() / (self.interface.ycmax + 1)) # 200 = graphic console
+        self.square_view_width = self.square_view_height = min(old_div((get_screen().get_width() - 200), (self.interface.xcmax + 1)),
+            old_div(get_screen().get_height(), (self.interface.ycmax + 1))) # 200 = graphic console
         self.ymax = self.square_view_height * (self.interface.ycmax + 1)
 
     def _collision_display(self):
@@ -168,15 +174,15 @@ class GridView(object):
     def square_from_mousepos(self, pos):
         self._update_coefs()
         x, y = pos
-        xc = x / self.square_view_width
-        yc = (self.ymax - y) / self.square_view_height
+        xc = old_div(x, self.square_view_width)
+        yc = old_div((self.ymax - y), self.square_view_height)
         if 0 <= xc <= self.interface.xcmax and 0 <= yc <= self.interface.ycmax:
             return self.interface.server.player.world.grid[(xc, yc)]
 
     def object_from_mousepos(self, pos):
         self._update_coefs()
         x, y = pos
-        for o in self.interface.dobjets.values():
+        for o in list(self.interface.dobjets.values()):
             xo, yo = self._object_coords(o)
             if square_of_distance(x, y, xo, yo) <= R2 + 1: # is + 1 necessary?
                 return o
@@ -205,7 +211,7 @@ class GridView(object):
                          self.interface.grid_view._object_coords(target),
                          self.interface.grid_view._object_coords(a))
         pygame.draw.circle(get_screen(), (100, 100, 100),
-                           self.interface.grid_view._object_coords(target), R*3/2, 0)
+                           self.interface.grid_view._object_coords(target), old_div(R*3,2), 0)
         pygame.display.flip() # not very clean but seems to work (persistence of vision?)
         # better: interface.anims queue to render when the time has come
         # (not during the world model update)

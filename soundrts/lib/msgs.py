@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import map
 NB_ENCODE_SHIFT = 1000000
 
 def encode_msg(msg):

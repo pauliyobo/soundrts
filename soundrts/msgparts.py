@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 ACCEPT_INVITATION_FROM = [4053]
 AGGRESSIVE_COMPUTER = [4257]
 ALERT = [152]

@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 def must_be_said(nb):
     if nb <= 10:
         return True

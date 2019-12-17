@@ -1,4 +1,6 @@
-from worldplayerbase import Player
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from .worldplayerbase import Player
 
 
 class Human(Player):

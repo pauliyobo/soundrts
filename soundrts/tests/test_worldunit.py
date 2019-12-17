@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from soundrts.worldroom import Square
 from soundrts.worldunit import Unit
 

@@ -1,10 +1,13 @@
+from __future__ import unicode_literals
+from builtins import range
+from builtins import object
 import pytest
 
 from soundrts.mapfile import Map
 from soundrts.world import World
 
 
-class Player:
+class Player(object):
     food = 0
     nb_units_produced = 0
     used_food = 0

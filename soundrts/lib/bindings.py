@@ -1,10 +1,13 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from builtins import object
 import re
 
 import pygame
 from pygame import KMOD_CTRL, KMOD_ALT, KMOD_SHIFT
 from pygame import K_LCTRL, K_LALT, K_LSHIFT, K_RCTRL, K_RALT, K_RSHIFT
 
-from log import warning
+from .log import warning
 
 
 class _Error(Exception):
@@ -54,7 +57,7 @@ class Bindings(object):
         # "\w" means "alphanumeric character (or the underscore)"
         # "(?<!\w)" means "no '\w' before"
         # "(?!\w)" means "no '\w' after"
-        for name, value in self._definitions.items():
+        for name, value in list(self._definitions.items()):
             # replace name with value
             line = re.sub(r"(?<!\w)%s(?!\w)" % name, value, line)
         return line

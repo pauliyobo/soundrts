@@ -3,7 +3,9 @@ This module behaves like pyTTS.
 It runs on Windows with win32com and Jaws.
 The only behavior provided is the behavior that tts.py needs.
 """
+from __future__ import unicode_literals
 
+from builtins import object
 import win32com.client
 import time
 

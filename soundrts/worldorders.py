@@ -1,9 +1,15 @@
-from definitions import rules, MAX_NB_OF_RESOURCE_TYPES, VIRTUAL_TIME_INTERVAL
-from lib.log import info
-from lib.nofloat import to_int, PRECISION
-from worldaction import AttackAction, MoveXYAction
-from worldresource import Meadow, Deposit, Corpse
-from worldroom import Square
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import range
+from past.utils import old_div
+from builtins import object
+from .definitions import rules, MAX_NB_OF_RESOURCE_TYPES, VIRTUAL_TIME_INTERVAL
+from .lib.log import info
+from .lib.nofloat import to_int, PRECISION
+from .worldaction import AttackAction, MoveXYAction
+from .worldresource import Meadow, Deposit, Corpse
+from .worldroom import Square
 from soundrts.lib.nofloat import square_of_distance
 
 
@@ -400,7 +406,7 @@ class ProductionOrder(ComplexOrder):
             t = self.time_cost
         else:
             t = self.time
-        c = int((self.time_cost - t) * 10 / self.time_cost)
+        c = int(old_div((self.time_cost - t) * 10, self.time_cost))
         if c != self._previous_completeness:
             self.unit.notify("completeness,%s" % c)
             self._previous_completeness = c
@@ -1075,7 +1081,7 @@ class UseOrder(ComplexOrder):
                 u.player = None
                 u.place = None
                 u.id = None # so the unit will be added to world.active_objects
-                u.hp = u.hp_max / 3
+                u.hp = old_div(u.hp_max, 3)
                 u.set_player(self.unit.player)
                 u.move_to(c.place, c.x, c.y)
                 if u.decay:
@@ -1209,5 +1215,5 @@ class UnloadAllOrder(TransportOrder):
 
 # build a dictionary containing order classes
 # for example: ORDERS_DICT["go"] == GoOrder
-ORDERS_DICT = dict([(_v.keyword, _v) for _v in locals().values()
+ORDERS_DICT = dict([(_v.keyword, _v) for _v in list(locals().values())
                     if hasattr(_v, "keyword") and issubclass(_v, Order)])

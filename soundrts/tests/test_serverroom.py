@@ -1,3 +1,7 @@
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 import time
 
 import pytest
@@ -7,7 +11,7 @@ from soundrts.mapfile import Map
 from soundrts.serverroom import same, time_string, Game, Orders
 
 
-class Client:
+class Client(object):
 
     def __init__(self, login):
         self.login = login

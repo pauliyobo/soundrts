@@ -1,14 +1,19 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
 # read/write the config file
 
-import ConfigParser
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+import configparser
 import platform
 import os
 import re
 import shutil
 import sys
 
-from lib.log import info, warning
-from paths import CONFIG_FILE_PATH
+from .lib.log import info, warning
+from .paths import CONFIG_FILE_PATH
 
 
 def login_is_valid(login):
@@ -57,7 +62,7 @@ _options = [add_converter(o) for o in _options]
 _module = sys.modules[__name__]
 
 def save(name=CONFIG_FILE_PATH):
-    c = ConfigParser.SafeConfigParser()
+    c = configparser.SafeConfigParser()
     for section, option, _, _ in _options:
         if not c.has_section(section):
             c.add_section(section)
@@ -76,7 +81,7 @@ def _copy_to_module(c):
     for section, option, default, converter in _options:
         try:
             raw_value = c.get(section, option)
-        except ConfigParser.Error:
+        except configparser.Error:
             info("%r option is missing (will be: %r)", option, default)
             value = default
             error = True
@@ -92,7 +97,7 @@ def _copy_to_module(c):
 
 def load(name=CONFIG_FILE_PATH):
     if os.path.isfile(name):
-        c = ConfigParser.SafeConfigParser()
+        c = configparser.SafeConfigParser()
         c.readfp(open(name))
         error = _copy_to_module(c)
         if error:

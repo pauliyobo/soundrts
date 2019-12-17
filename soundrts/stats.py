@@ -1,13 +1,18 @@
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 try:
     from ctypes import create_string_buffer, sizeof, windll, c_ulong, byref
 except:
     pass
 import os
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
-from metaserver import METASERVER_URL
-from lib.log import debug
-from paths import STATS_PATH
+from .metaserver import METASERVER_URL
+from .lib.log import debug
+from .paths import STATS_PATH
 
 
 class Stats(object):
@@ -34,7 +39,7 @@ class Stats(object):
         if stats:
             try:
                 f = open(self.filepath, "w")
-                for game_type in stats.keys():
+                for game_type in list(stats.keys()):
                     nb_games, total_duration = stats[game_type]
                     f.write(" ".join((game_type, repr(nb_games), repr(total_duration))) + "\n")
                 f.close()
@@ -50,7 +55,7 @@ class Stats(object):
         try:
             if duration >= 60:
                 stats = self._read_file()
-                if stats.has_key(game_type):
+                if game_type in stats:
                     stats[game_type][0] += 1
                     stats[game_type][1] += duration
                 else:
@@ -61,7 +66,7 @@ class Stats(object):
 
     def get(self, game_type): # used for unit test
         stats = self._read_file()
-        if stats.has_key(game_type):
+        if game_type in stats:
             return tuple(stats[game_type])
         else:
             return None
@@ -70,10 +75,10 @@ class Stats(object):
         try:
             stats = self._read_file()
             weak_id = self._get_weak_user_id()
-            for game_type in stats.keys():
+            for game_type in list(stats.keys()):
                 nb_games, total_duration = stats[game_type]
                 try:
-                    s = urllib.urlopen(self.server + "stats.php?method=add&game_type=%s&nb_games=%s&total_duration=%s&weak_id=%s" % (game_type, nb_games, total_duration, weak_id)).read()
+                    s = urllib.request.urlopen(self.server + "stats.php?method=add&game_type=%s&nb_games=%s&total_duration=%s&weak_id=%s" % (game_type, nb_games, total_duration, weak_id)).read()
                 except:
                     debug("stats server didn't reply")
                     break # don't try next stats

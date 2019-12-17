@@ -1,5 +1,10 @@
-from lib.log import exception, warning, info
-from lib.nofloat import PRECISION
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import object
+from past.utils import old_div
+from .lib.log import exception, warning, info
+from .lib.nofloat import PRECISION
 
 
 COLLISION_RADIUS = 175 # millimeters # 350 / 2
@@ -37,9 +42,9 @@ class Entity(object):
     is_invisible = False
     is_cloakable = False
     is_cloaked = False
-    sight_range = 85 * PRECISION / 10
+    sight_range = old_div(85 * PRECISION, 10)
     is_a_detector = False
-    detection_range = 85 * PRECISION / 10
+    detection_range = old_div(85 * PRECISION, 10)
     is_a_cloaker = False
     cloaking_range = 6 * PRECISION
 

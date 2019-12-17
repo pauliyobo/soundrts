@@ -1,4 +1,9 @@
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
 #from soundrts import version
+from builtins import object
+from past.utils import old_div
 DEBUG_MODE = False #version.IS_DEV_VERSION
 
 
@@ -30,19 +35,19 @@ class CollisionMatrix(object):
         self._set = set()
         self.xmax = xmax
         self.res = res
-        self.amax = self.xmax / self.res
+        self.amax = old_div(self.xmax, self.res)
 
 ##    def _key(self, x, y): # tuple variant
 ##        return x / self.res, y / self.res
 
     def _key(self, x, y):
-        return x / self.res + self.amax * (y / self.res)
+        return old_div(x, self.res) + self.amax * (old_div(y, self.res))
 
 ##    def _xy(self, k): # tuple variant
 ##        return (k[0] * self.res, k[1] * self.res)
 
     def _xy(self, k):
-        b = k / self.amax
+        b = old_div(k, self.amax)
         a = k % self.amax
         return a * self.res, b * self.res
 
@@ -81,32 +86,32 @@ if __name__ == "__main__":
         pass
     m = CollisionMatrix(200, 2)
 #    assert m._key(0, 0) == 0
-    print m._key(50, 0)
-    print m._key(0, 50)
+    print(m._key(50, 0))
+    print(m._key(0, 50))
     for x, y in ((0, 0), ( 50, 0), (0, 50), (20, 56), ):
         k = m._key(x, y)
-        print (x, y), k, m._xy(k)
+        print((x, y), k, m._xy(k))
         assert m._xy(k) == (x, y)
     for x, y in ((20, 57), ):
         k = m._key(x, y)
-        print (x, y), k, m._xy(k)
+        print((x, y), k, m._xy(k))
         assert m._xy(k) != (x, y)
     o = O()
     o.collision = 1
     o.x = 6
     o.y = 6
-    print m._shape(o.x, o.y)
+    print(m._shape(o.x, o.y))
     assert len(m._shape(o.x, o.y)) in (5, 9)
     if m.would_collide(o.x, o.y):
-        print "error"
+        print("error")
     m.add(o.x, o.y)
-    print m.xy_set()
+    print(m.xy_set())
 #    m.add(o.x, o.y)
     if not m.would_collide(o.x, o.y):
-        print "error"
+        print("error")
     m.remove(o.x, o.y)
     if m.would_collide(o.x, o.y):
-        print "error"
+        print("error")
 ##    m.remove(o.x, o.y)
 ##    if m.would_collide(o.x, o.y):
 ##        print "error"

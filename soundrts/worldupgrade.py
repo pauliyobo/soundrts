@@ -1,5 +1,9 @@
-from definitions import MAX_NB_OF_RESOURCE_TYPES
-from lib.log import warning
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from builtins import range
+from builtins import object
+from .definitions import MAX_NB_OF_RESOURCE_TYPES
+from .lib.log import warning
 
 
 class Upgrade(object): # or Tech
@@ -16,7 +20,7 @@ class Upgrade(object): # or Tech
     def __init__(self, name, dct):
         self.type_name = name
         self.__name__ = name
-        for k, v in dct.items():
+        for k, v in list(dct.items()):
             if k == "class":
                 continue
             if hasattr(self, k) and not callable(getattr(self, k)):

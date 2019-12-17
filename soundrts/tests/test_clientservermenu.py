@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from soundrts import clientservermenu as csm
 from soundrts.mapfile import Map
 import soundrts.msgparts as mp

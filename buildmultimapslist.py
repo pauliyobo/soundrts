@@ -1,4 +1,5 @@
 #! python2.7
+from __future__ import unicode_literals
 from soundrts.lib import log
 log.add_console_handler()
 
