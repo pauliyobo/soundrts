@@ -223,7 +223,7 @@ class World(object):
             players = self.players
         radius_2 = radius * radius
         return [o for p in players for o in p._potential_neighbors(x, y)
-                if list(filter(o)) and square_of_distance(x, y, o.x, o.y) <= radius_2]
+                if filter(o	) and square_of_distance(x, y, o.x, o.y) <= radius_2]
 
     def get_place_from_xy(self, x, y):
         return self.grid.get((old_div(x, self.square_width),

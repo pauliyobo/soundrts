@@ -20,6 +20,9 @@ class _Voice(object):
     current = 0 # index of the message currently said
                 # == len(self.msgs) if no message
 
+    def __next__(self):
+        return next(iter(self.msgs))
+
     def get_unsaid(self): # index of the first never said message (== len(self.msgs) if no unsaid message)
         for i, m in enumerate(self.msgs):
             if not m.said:

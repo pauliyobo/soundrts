@@ -535,8 +535,8 @@ class Player(object):
             self.client.push(*args)
 
     def execute_command(self, data):
-        args = string.split(data)
-        cmd = "cmd_" + string.lower(args[0])
+        args = data.split()
+        cmd = "cmd_" + args[0].lower()
         if hasattr(self, cmd):
             getattr(self, cmd)(args[1:])
         else:

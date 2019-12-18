@@ -127,7 +127,9 @@ class Map(object):
         except:
             s = ""
         s += self.additional_rules + self.additional_ai
-        return md5(s).hexdigest()
+        # since we are on python3
+        # the string must be encoded
+        return md5(s.encode()).hexdigest()
 
     def _check_digest(self):
         if self.digest is None:
@@ -162,12 +164,12 @@ class Map(object):
             return self._original_map_string
         if os.path.isfile(self.path):
             map_name = os.path.split(self.path)[-1]
-            content = base64.b64encode(open(self.path, "U").read())
-            return map_name + "***" + content
+            content = base64.b64encode(open(self.path, "U").read().encode())
+            return map_name + "***" + content.decode()
         else:
             dest = os.path.join(TMP_PATH, "map.tmp")
             z = zipdir.zipdir(self.path, dest)
-            content = base64.b64encode(open(dest, "rb").read())
+            content = base64.b64encode(open(dest, "rb").read().encode())
             os.remove(dest)
             return "zip" + "***" + content
 
