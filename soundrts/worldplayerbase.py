@@ -324,7 +324,8 @@ class Player(object):
                     except:
                         self._enemy_menace[place] = menace
                         self._enemy_presence.append(place)
-                    if o.range > PRECISION:
+                    print(str(type(o)))
+                    if o.range is not None and o.range > PRECISION:
                         for place in place.neighbors:
                             try:
                                 self._enemy_menace[place] += old_div(menace, 10)

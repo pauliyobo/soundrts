@@ -216,7 +216,7 @@ class World(object):
     def get_objects(self, x, y, radius, filter=lambda x: True):
         radius_2 = radius * radius
         return [o for z in self.squares for o in z.objects
-                if list(filter(o)) and square_of_distance(x, y, o.x, o.y) <= radius_2]
+                if filter(o) and square_of_distance(x, y, o.x, o.y) <= radius_2]
 
     def get_objects2(self, x, y, radius, filter=lambda x: True, players=None):
         if not players:
