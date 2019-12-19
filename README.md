@@ -5,6 +5,7 @@ Currently the game runs from source, however I could only test on windows
 you will need:
 * python 3.7 I've tested on python 3.7.4
 * pygame
+* pytest
 * pywin32
 Alternatively you can run
 
