@@ -300,11 +300,11 @@ class World(object):
     def get_digest(self):
         d = md5(str(self.time).encode())
         for p in self.players:
-            d.update(str(len(p.units)))
+            d.update(str(len(p.units)).encode())
         for z in self.squares:
-            d.update(str(len(z.objects)))
+            d.update(str(len(z.objects)).encode())
         for ov in self._get_objects_values():
-            d.update(ov)
+            d.update(ov.encode())
         return d.hexdigest()
 
     def _update_buckets(self):
