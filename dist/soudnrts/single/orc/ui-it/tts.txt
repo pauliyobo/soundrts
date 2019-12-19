@@ -1,5 +1,0 @@
-7000 allevamento di maiali
-7001 caserme
-7002 sala grande
-7003 bracciante
-7004 grugnito
