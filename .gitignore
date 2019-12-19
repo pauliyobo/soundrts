@@ -1,5 +1,8 @@
 *.pyc
+*.spec
 /doc/src/*/stats.inc
 /user
 *.bak
 venv/
+build/
+dist/
