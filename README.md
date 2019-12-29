@@ -20,6 +20,6 @@ python soundrts.py
 ```
 
 ## todo
-* ensuring all tests pass, currently only 8 out of 83 fail
+* ensuring all tests pass, currently only 1 out of 83 fail
 * The code has been ported with future, therefore some errors still need to be spotted
 * Building an executable for the game
